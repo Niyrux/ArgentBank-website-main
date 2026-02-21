@@ -24,12 +24,14 @@ const userSlice = createSlice({
   initialState: {
     user: null,
     loading: false,
+    token:localStorage.getItem('jwtToken') || null,
     error: null,
   },
   reducers: {
     logoutUser: (state) => {
       state.user = null;
-      localStorage.removeItem('jwtToken'); 
+       state.token = null; 
+      localStorage.removeItem('jwtToken');
     },
   },
   extraReducers: (builder) => {
@@ -42,6 +44,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
         state.error = null;
+        state.token = action.payload.body.token;
         if (action.payload && action.payload.body.token) {
           localStorage.setItem('jwtToken', action.payload.body.token); 
         }
@@ -53,6 +56,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUser, logoutUser } = userSlice.actions;
+export const {  logoutUser } = userSlice.actions;
 
 export default userSlice.reducer;

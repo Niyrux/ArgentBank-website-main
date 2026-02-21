@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './edit.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUserData } from '../../components/reducers/userInfo';
+import { fetchUserData } from '../reducers/userInfo';
 import { putUserdata } from '../reducers/putUserinfo';
 
 const Edit = () => {
@@ -16,19 +16,25 @@ const Edit = () => {
     const userData = useSelector(state => state.userInfo.data);
     const isLoading = useSelector(state => state.userInfo.loading);
     const error = useSelector(state => state.userInfo.error);
-const [newUserName, setNewUserName] = useState(userData.body ? userData.body.userName : "");
+const [newUserFirstName, setNewUserFirstName] = useState(userData.body ? userData.body.firstName : "");
+const [newUserLastName, setNewUserLastName] = useState(userData.body ? userData.body.lastName : "");
     const editFormRef = useRef(null);
 
     useEffect(() => {
         dispatch(fetchUserData());
     }, [dispatch]);
-
+useEffect(() => {
+    if (userData.body) {
+        setNewUserFirstName(userData.body.firstName);
+        setNewUserLastName(userData.body.lastName);
+    }
+}, [userData]);
  
 
 const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-        await dispatch(putUserdata({ userName: newUserName }));
+        await dispatch(putUserdata({ firstName: newUserFirstName, lastName: newUserLastName }));
         dispatch(fetchUserData());
         toggleFormVisibility();
     } catch (error) {
@@ -52,15 +58,15 @@ const handleFormSubmit = async (e) => {
 
     return (
         <div className="header">
-            <h1>Welcome back<br />{userData.body && userData.body.userName + ' ' +  userData.body.lastName}</h1>
+            <h1>Welcome back<br />{userData.body && userData.body.firstName + ' ' +  userData.body.lastName}</h1>
             {isFormVisible  ? (
                 <form ref={editFormRef} onSubmit={handleFormSubmit} className="edit-form">
                     <div className='container-input'>
                     <input
                         type="text"
                         name='lastname'
-                        value={userData.body.lastName}
-                        disabled
+                        value={newUserLastName} 
+                        onChange={(e) => setNewUserLastName(e.target.value)}
                     />
                      <label htmlFor="lastname">Last name:</label>
                     </div>
@@ -69,21 +75,12 @@ const handleFormSubmit = async (e) => {
                     <input
                         type="text"
                         name='firstname'
-                        value={userData.body.firstName}
-                        disabled
+                        value={newUserFirstName }
+                        onChange={(e) => setNewUserFirstName(e.target.value)}
                     />
                     
                     
                     <label htmlFor="firstname">First name:</label>
-                    </div>
-                    <div className='container-input'>
-                    <input
-                        type="text"
-                        name='username'
-                        value={newUserName}
-                        onChange={(e) => setNewUserName(e.target.value)}
-                    />
-                    <label htmlFor="username">User name:</label>
                     </div>
                     <div className='container-btn'>
                     <button className="edit-button" type="submit">Save</button>

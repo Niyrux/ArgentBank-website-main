@@ -13,7 +13,6 @@ function Signin() {
     const dispatch = useDispatch();
     const navigate = useNavigate(); 
     const error = useSelector((state) => state.user.error);
-    console.log(error)
     useEffect(() => {
         if(error && error.message === "Error: User not found!") {
             setErrorMessage("Invalid credentials!");

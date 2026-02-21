@@ -3,9 +3,9 @@ import axios from 'axios';
 
 export const putUserdata = createAsyncThunk(
   'user/putUserdata',
-  async (newUserData, { rejectWithValue }) => { 
+  async (newUserData, { rejectWithValue, getState }) => { 
     try {
-      const token = localStorage.getItem('jwtToken');
+       const token = getState().user.token;
       if (!token) {
         throw new Error('No token found in localStorage');
       }
@@ -27,7 +27,9 @@ const putUserInfo = createSlice({
   name: 'put',
   initialState: {
     data: {
-      userName: "",
+      lastname: "",
+      firstname: "",
+
     },
     loading: false,
     error: null,
@@ -41,7 +43,8 @@ const putUserInfo = createSlice({
       })
       .addCase(putUserdata.fulfilled, (state, action) => {
         state.loading = false;
-        state.data.userName = action.payload.userName; 
+        state.data.firstname = action.payload.body.firstName; 
+        state.data.lastname = action.payload.body.lastName; 
         state.error = null;
       })
       .addCase(putUserdata.rejected, (state, action) => {

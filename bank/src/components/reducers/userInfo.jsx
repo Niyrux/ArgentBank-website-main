@@ -1,22 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-
 export const fetchUserData = createAsyncThunk(
   'user/fetchUserData',
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState }) => {  
     try {
-      const token = localStorage.getItem('jwtToken');
-      if (!token) {
-        throw new Error('No token found in localStorage');
-      }
+      const token = getState().user.token;  
+      if (!token) throw new Error('No token found');
 
-     const response = await axios.post('http://localhost:3001/api/v1/user/profile', null, {
-  headers: {
-    Authorization: `Bearer ${token}`
-  }
-});
-
+      const response = await axios.post('http://localhost:3001/api/v1/user/profile', null, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -31,10 +25,9 @@ const userInfo = createSlice({
       email: null,
       firstName: null,
       lastName: null,
-      userName: null,
       createdAt: null,
       updatedAt: null,
-      id: null
+      id: null,
     },
     loading: false,
     error: null,
@@ -56,6 +49,7 @@ const userInfo = createSlice({
         state.loading = false;
         state.error = action.payload;
       });
+      
   },
 });
 

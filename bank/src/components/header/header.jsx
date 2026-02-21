@@ -8,8 +8,8 @@ import { fetchUserData } from '../../components/reducers/userInfo';
 
 
 function Header() {
-  const user = useSelector((state) => state.user.user); 
   const dispatch = useDispatch();
+  const token = useSelector((state) => state.user.token);
   const handleLogout = () => {
     dispatch(logoutUser()); 
   };
@@ -27,9 +27,9 @@ function Header() {
         />
       </Link>
       <div>
-       {user && userData.body && userData.body.userName ? ( 
+       {token? ( 
   <>
-    <Link className="main-nav-item" to="/user">
+    <Link className="main-nav-item" to="/Profile">
       <i className="fa fa-user-circle"></i>
       {userData.body.firstName}
     </Link>
